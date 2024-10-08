@@ -6,8 +6,9 @@
     <title>Roulette and Dice</title>
 </head>
 <body>
+    <!-- Page title goes here, as well as project info-->
   <div style="display:flex;justify-content:center;align-items: center;">
-    <h1>Kain and Andrew's Casion - with blackjack and hookers!</h1>
+    <h1>Kain and Andrew's Casino - with blackjack and hookers!</h1>
 </div>
 <div style="display:flex;justify-content:center;align-items: center;">
   <b1>Please Note: This is an unsafe project with insecure blockchain rng. Do not use it for real!!!</b1>
@@ -19,14 +20,21 @@
     <div style="display:flex;justify-content: center;align-items: center;">
         <div>
             <div id="roulette-image"></div>
-
-            <div style="display:flex;justify-content:center;align-items:center;margin-top:20px;">
-              <label for="selected-number">Enter a number (0-36): </label>
-              <input type="number" id="selected-number" min="0" max="36" style="margin-left:10px;width:50px;">
-          </div>
-          <br>
-
-            <button id="start-roulette" style="margin:auto;display:block;">Start Roulette</button>
+            <form id="roulette-form">
+                <div class="form-group">
+                    <label for="selected-number">Enter a number (0-36):</label>
+                    <input type="number" id="selected-number" name="selected-number" min="0" max="36" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="bet-amount">Bet Amount:</label>
+                    <input type="number" id="bet-amount" name="bet-amount" min="1" required>
+                </div>
+                
+                <div class="form-group">
+                    <button type="submit" id="place-bet">Place Bet</button>
+                </div>
+            </form>
         </div>
     </div>
     <div style="display:flex;justify-content:center;align-items: center; margin-top: 20px;">
@@ -46,9 +54,9 @@
     <div style="display:flex;justify-content: center;align-items: center; margin-top: 20px;">
         <button id="start-dice" style="margin:auto;display:block;">Roll Dice</button>
     </div>
+<!-- END OF HTML SECTION - its all javascript from here on baby ;)-->
     <script type="module">
         import Roulette from './src/index.ts';
-
         const img = new Image();
         img.src = 'https://images.vexels.com/media/users/3/151205/isolated/preview/8857efb275fbf2435db40a222d05b1e6-roulette-wheel-icon.png';
 
@@ -76,11 +84,27 @@
         function onRouletteStop(result) {
             resultElem.innerHTML = result.value;
         }
-
         rouletteImage.onstop = onRouletteStop;
 
+
         // Handle Roulette button click
-        document.getElementById('start-roulette').addEventListener('click', async () => {
+        document.getElementById('place-bet').addEventListener('click', async () => {
+            event.preventDefault();
+
+            //validate inputs
+            const selectedNumber = document.getElementById('selected-number').value;
+            const betAmount = document.getElementById('bet-amount').value;;
+            
+            if (selectedNumber === '' || betAmount === '') {;
+                return;
+            }
+            if (selectedNumber < 0 || selectedNumber > 36) {;
+                return;
+            }
+            if (betAmount <= 0) {;
+                return;
+            }
+            //uses a promise to wait for data from the blockchain
             const { promise, resolve, reject } = Promise.withResolvers();
             rouletteImage.asyncRollByIndex(promise);
 
@@ -123,6 +147,10 @@
             }
         });
 
+
+        
+
+        
         // Handle Dice button click
         document.getElementById('start-dice').addEventListener('click', () => {
             const rollDice = () => {
