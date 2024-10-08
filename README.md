@@ -39,3 +39,4 @@ to get developing;
 git clone;
 npm install (takes a wee while)
 npm run dev
+built on nixOS
