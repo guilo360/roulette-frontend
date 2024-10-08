@@ -9,7 +9,19 @@ Work to do:
     1) call the contract
     2) return JSON containing that value
 
-CHO HAN frontend - maybe just 2 text boxes
+CHO HAN frontend
+Add a bet amount box
+Radio Buttons
+  odd
+  even
+
+Roulette: 
+  red
+  black
+
+Backend Code:
+  Roulette
+  number to bet on: 
 
 
 ## DEBUG TOOLS

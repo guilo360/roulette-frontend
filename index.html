@@ -3,19 +3,32 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Roulette</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.6.1/web3.min.js"></script>
+    <title>Roulette and Dice</title>
 </head>
 <body>
+  <div style="display:flex;justify-content:center;align-items: center;">
+    <h1>Kain and Andrew's Casion - with blackjack and hookers!</h1>
+</div>
+<div style="display:flex;justify-content:center;align-items: center;">
+  <b1>Please Note: This is an unsafe project with insecure blockchain rng. Do not use it for real!!!</b1>
+</div>
     <div style="display:flex;justify-content:center;align-items: center;">
-        <h2>You rolled on: </h2>
-        <div style="border: 2px solid; width: 200px; height: 30px; text-align: center;" id="result"></div>
+        <h2>You rolled: </h2>
+        <div style="width: 200px; height: 30px; text-align: center;" id="result"></div>
     </div>
     <div style="display:flex;justify-content: center;align-items: center;">
         <div>
             <div id="roulette-image"></div>
-            <button id="start-image" style="margin:auto;display:block;">Start</button>
+            <button id="start-roulette" style="margin:auto;display:block;">Start Roulette</button>
         </div>
+    </div>
+    <div style="display:flex;justify-content:center;align-items: center; margin-top: 20px;">
+        <h2>Dice Rolls: </h2>
+        <div style="width: 100px; height: 30px; text-align: center; margin-left: 10px;" id="dice1"></div>
+        <div style="width: 100px; height: 30px; text-align: center; margin-left: 10px;" id="dice2"></div>
+    </div>
+    <div style="display:flex;justify-content: center;align-items: center; margin-top: 20px;">
+        <button id="start-dice" style="margin:auto;display:block;">Roll Dice</button>
     </div>
     <script type="module">
         import Roulette from './src/index.ts';
@@ -35,20 +48,23 @@
         });
 
         const resultElem = document.getElementById('result');
+        const dice1Elem = document.getElementById('dice1');
+        const dice2Elem = document.getElementById('dice2');
 
-        function onstart() {
+        function onRouletteStart() {
             resultElem.innerHTML = '';
         }
 
-        rouletteImage.onstart = onstart;
+        rouletteImage.onstart = onRouletteStart;
 
-        function onstop(result) {
+        function onRouletteStop(result) {
             resultElem.innerHTML = result.value;
         }
 
-        rouletteImage.onstop = onstop;
+        rouletteImage.onstop = onRouletteStop;
 
-        document.getElementById('start-image').addEventListener('click', async () => {
+        // Handle Roulette button click
+        document.getElementById('start-roulette').addEventListener('click', async () => {
             const { promise, resolve, reject } = Promise.withResolvers();
             rouletteImage.asyncRollByIndex(promise);
 
@@ -89,6 +105,18 @@
             } else {
                 console.error('Please install MetaMask!');
             }
+        });
+
+        // Handle Dice button click
+        document.getElementById('start-dice').addEventListener('click', () => {
+            const rollDice = () => {
+                const dice1 = Math.floor(Math.random() * 6) + 1; // Random number between 1 and 6
+                const dice2 = Math.floor(Math.random() * 6) + 1; // Random number between 1 and 6
+                dice1Elem.innerHTML = dice1;
+                dice2Elem.innerHTML = dice2;
+            };
+
+            rollDice();
         });
     </script>
 </body>
