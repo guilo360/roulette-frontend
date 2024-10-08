@@ -13,8 +13,11 @@ Work to do:
 
 TODO
 finish Cho Han logic - can only roll when you have selected an odd or even bet
+
 parametrise idex.html - Im sure I can move the javascript into a different folder
+
 Tidy up in general - I am not using much of the initial example I copied from - I'm sure I dont need its source either and can just use npm install.
+
 Figure out why the linebreaks in this document arent getting sent to github
 
 
@@ -23,5 +26,7 @@ Figure out why the linebreaks in this document arent getting sent to github
 to get developing;
 
 git clone;
+
 npm install (takes a wee while)
+
 npm run dev
