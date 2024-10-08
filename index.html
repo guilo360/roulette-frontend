@@ -1,70 +1,95 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Roulette</title>
-  </head>
-  <body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.6.1/web3.min.js"></script>
+</head>
+<body>
     <div style="display:flex;justify-content:center;align-items: center;">
-      <h2>You rolled on: </h2>
-      <div style="border: 2px solid; width: 200px; height: 30px; text-align: center;" id="result"></div>
+        <h2>You rolled on: </h2>
+        <div style="border: 2px solid; width: 200px; height: 30px; text-align: center;" id="result"></div>
     </div>
     <div style="display:flex;justify-content: center;align-items: center;">
-      <div>
-        <div id="roulette-image"></div>
-        <button id="start-image" style="margin:auto;display:block;">start</button>
-      </div>
-
-    <div style="display:flex;justify-content: space-evenly;align-items: center;">
-      
+        <div>
+            <div id="roulette-image"></div>
+            <button id="start-image" style="margin:auto;display:block;">Start</button>
+        </div>
     </div>
     <script type="module">
-      import Roulette from './src/index.ts';
-      import axios from 'axios';
-    
-      const img = new Image();
-      img.src = 'https://images.vexels.com/media/users/3/151205/isolated/preview/8857efb275fbf2435db40a222d05b1e6-roulette-wheel-icon.png';
-      
-      const rouletteImage = new Roulette({
-        container: 'roulette-image',
-        board: {
-          element: img,
-          padding: 10,
-        },
-        sections: [0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10, 5, 24, 16, 33, 1, 20, 14, 31, 9, 22, 18, 29, 7, 28, 12, 35, 3, 26],
-        colors: ["#AAD7D9", "#FBF9F1", "#E5E1DA"],
-        settings: {},
-      });
-    
-      const resultElem = document.getElementById('result');
-    
-      function onstart() {
-        resultElem.innerHTML = '';
-      }
-    
-      rouletteImage.onstart = onstart;
-    
-      function onstop(result) {
-        resultElem.innerHTML = result.value;
-      }
-    
-      rouletteImage.onstop = onstop;
-    
-      document.getElementById('start-image').addEventListener('click', async () => {
-        const { promise, resolve, reject } = Promise.withResolvers();
-        rouletteImage.asyncRollByIndex(promise);
-    // tutorial to impliment: https://medium.com/@marketing.blockchain/how-to-use-a-web3js-call-contract-function-138eda3d3d15
-        // Make an API call to get the roll index
-        try {
-          const res = await axios.get('your_path'); // Replace 'your_path' with your actual API endpoint
-          resolve(res.data.rollIndex); // Assuming your API returns an object with a rollIndex property
-        } catch (error) {
-          reject(error);
-          console.error(error); // Handle the error accordingly
+        import Roulette from './src/index.ts';
+
+        const img = new Image();
+        img.src = 'https://images.vexels.com/media/users/3/151205/isolated/preview/8857efb275fbf2435db40a222d05b1e6-roulette-wheel-icon.png';
+
+        const rouletteImage = new Roulette({
+            container: 'roulette-image',
+            board: {
+                element: img,
+                padding: 10,
+            },
+            sections: [0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10, 5, 24, 16, 33, 1, 20, 14, 31, 9, 22, 18, 29, 7, 28, 12, 35, 3, 26],
+            colors: ["#AAD7D9", "#FBF9F1", "#E5E1DA"],
+            settings: {},
+        });
+
+        const resultElem = document.getElementById('result');
+
+        function onstart() {
+            resultElem.innerHTML = '';
         }
-      });
+
+        rouletteImage.onstart = onstart;
+
+        function onstop(result) {
+            resultElem.innerHTML = result.value;
+        }
+
+        rouletteImage.onstop = onstop;
+
+        document.getElementById('start-image').addEventListener('click', async () => {
+            const { promise, resolve, reject } = Promise.withResolvers();
+            rouletteImage.asyncRollByIndex(promise);
+
+            // Connect to Binance Smart Chain testnet using Web3
+            if (typeof window.ethereum !== 'undefined') {
+                const web3 = new Web3(window.ethereum);
+
+                // Set the provider to BSC Testnet
+                const bscTestnetRPC = "https://data-seed-prebsc-1-s1.binance.org:8545/";
+                web3.setProvider(new Web3.providers.HttpProvider(bscTestnetRPC));
+
+                // Request account access
+                await window.ethereum.request({ method: 'eth_requestAccounts' });
+
+                const contractAddress = "YOUR_CONTRACT_ADDRESS"; // Replace with your BSC testnet contract address
+                const abi = [
+                    // Replace with your contract ABI
+                    {
+                        "constant": true,
+                        "inputs": [],
+                        "name": "getRollIndex",
+                        "outputs": [{ "name": "", "type": "uint256" }],
+                        "payable": false,
+                        "stateMutability": "view",
+                        "type": "function"
+                    }
+                ];
+
+                const contract = new web3.eth.Contract(abi, contractAddress);
+
+                try {
+                    const rollIndex = await contract.methods.getRollIndex().call();
+                    resolve(rollIndex); // Resolve the promise with the result
+                } catch (error) {
+                    reject(error);
+                    console.error(error); // Handle the error accordingly
+                }
+            } else {
+                console.error('Please install MetaMask!');
+            }
+        });
     </script>
-    
-  </body>
+</body>
 </html>
