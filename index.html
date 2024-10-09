@@ -11,7 +11,7 @@
     <h1>Kain and Andrew's Casino - with blackjack and hookers!</h1>
 </div>
 <div style="display:flex;justify-content:center;align-items: center;">
-  <b1>Please Note: This is an unsafe project with insecure blockchain rng. Do not use it for real!!!</b1>
+  <b1>Please Note: This is an unsafe project with insecure blockchain rng. Do not use it for real!!! This implimentation is also currently incomplete and doesnt work properly, but serves as a proof of concept</b1>
 </div>
     <div style="display:flex;justify-content:center;align-items: center;">
         <h2>You rolled: </h2>
@@ -110,33 +110,117 @@
 
             // Connect to Binance Smart Chain testnet using Web3
             if (typeof window.ethereum !== 'undefined') {
-                const web3 = new Web3(window.ethereum);
-
+                const web3 = new Web3('https://data-seed-prebsc-1-s1.bnbchain.org:8545')
                 // Set the provider to BSC Testnet
-                const bscTestnetRPC = "https://data-seed-prebsc-1-s1.binance.org:8545/";
+                const bscTestnetRPC = "https://data-seed-prebsc-1-s1.bnbchain.org:8545";
                 web3.setProvider(new Web3.providers.HttpProvider(bscTestnetRPC));
 
                 // Request account access
                 await window.ethereum.request({ method: 'eth_requestAccounts' });
 
-                const contractAddress = "YOUR_CONTRACT_ADDRESS"; // Replace with your BSC testnet contract address
+                const contractAddress = "0x4cD79AA672A58E7ec949e6A10f8eACE885271Ffe"; // Replace with your BSC testnet contract address
                 const abi = [
-                    // Replace with your contract ABI
-                    {
-                        "constant": true,
-                        "inputs": [],
-                        "name": "getRollIndex",
-                        "outputs": [{ "name": "", "type": "uint256" }],
-                        "payable": false,
-                        "stateMutability": "view",
-                        "type": "function"
-                    }
-                ];
+	{
+		"inputs": [
+			{
+				"internalType": "uint8[]",
+				"name": "option",
+				"type": "uint8[]"
+			},
+			{
+				"internalType": "uint64",
+				"name": "rate",
+				"type": "uint64"
+			}
+		],
+		"name": "bet",
+		"outputs": [
+			{
+				"internalType": "uint8",
+				"name": "outcome",
+				"type": "uint8"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint64",
+				"name": "amount",
+				"type": "uint64"
+			}
+		],
+		"name": "buyTokens",
+		"outputs": [
+			{
+				"internalType": "uint64",
+				"name": "",
+				"type": "uint64"
+			}
+		],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address payable",
+				"name": "newHouse",
+				"type": "address"
+			}
+		],
+		"name": "changeHouse",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "maxBet",
+		"outputs": [
+			{
+				"internalType": "uint64",
+				"name": "",
+				"type": "uint64"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "minBet",
+		"outputs": [
+			{
+				"internalType": "uint64",
+				"name": "",
+				"type": "uint64"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "spin",
+		"outputs": [
+			{
+				"internalType": "uint8",
+				"name": "number",
+				"type": "uint8"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	}
+]
 
                 const contract = new web3.eth.Contract(abi, contractAddress);
 
                 try {
-                    const rollIndex = await contract.methods.getRollIndex().call();
+                    const rollIndex = await contract.methods.bet().call();
                     resolve(rollIndex); // Resolve the promise with the result
                 } catch (error) {
                     reject(error);
